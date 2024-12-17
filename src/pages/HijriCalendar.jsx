@@ -48,31 +48,11 @@ const HijriCalendarPage = () => {
   };
 
   useEffect(() => {
-    setIsLoading(true);
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const { latitude, longitude } = position.coords;
-          setLocation({ latitude, longitude });
-          fetchHijriDate(latitude, longitude);
-        },
-        (positionError) => {
-          console.warn('Geolocation error:', positionError);
-          // Use default location if geolocation fails
-            setLocation(DEFAULT_LOCATION);
-            fetchHijriDate(DEFAULT_LOCATION.latitude, DEFAULT_LOCATION.longitude);
-          },
-          {
-            enableHighAccuracy: false,
-            timeout: 5000,
-            maximumAge: 0
-          }
-        );
-      } else {
+    
         // Fallback if geolocation is not supported
         setLocation(DEFAULT_LOCATION);
         fetchHijriDate(DEFAULT_LOCATION.latitude, DEFAULT_LOCATION.longitude);
-      }
+      
     }, []);
   
 
