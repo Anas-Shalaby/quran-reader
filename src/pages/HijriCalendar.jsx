@@ -9,12 +9,43 @@ const ARABIC_HIJRI_MONTHS = [
   'رمضان', 'شوال', 'ذو القعدة', 'ذو الحجة'
 ];
 
+// Default location (Cairo, Egypt) as a fallback
+const DEFAULT_LOCATION = {
+  latitude: 30.0444,
+  longitude: 31.2357
+}
 const HijriCalendarPage = () => {
   const [hijriDate, setHijriDate] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [location, setLocation] = useState(null);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const fetchHijriDate = async (lat, lon) => {
+    try {
+      const calendar = new HijriCalendar();
+      const hijriDateResult = await calendar.getHijriDateByLocation(
+        currentDate, 
+        lat, 
+        lon
+      );
+      
+      // Replace month name with Arabic month name
+      hijriDateResult.monthName = ARABIC_HIJRI_MONTHS[hijriDateResult.month - 1];
+      
+      setHijriDate(hijriDateResult);
+      setIsLoading(false);
+    } catch (err) {
+      console.error('Hijri date fetch error:', err);
+      // Fallback to default location if location-based fetch fails
+      if (location !== DEFAULT_LOCATION) {
+        fetchHijriDate(DEFAULT_LOCATION.latitude, DEFAULT_LOCATION.longitude);
+      } else {
+        setError('تعذر جلب التاريخ الهجري');
+        setIsLoading(false);
+      }
+    }
+  };
 
   useEffect(() => {
     setIsLoading(true);
@@ -23,37 +54,27 @@ const HijriCalendarPage = () => {
         async (position) => {
           const { latitude, longitude } = position.coords;
           setLocation({ latitude, longitude });
-
-          try {
-            const calendar = new HijriCalendar();
-            const hijriDateResult = await calendar.getHijriDateByLocation(
-              currentDate, 
-              latitude, 
-              longitude
-            );
-            
-            // Replace month name with Arabic month name
-            hijriDateResult.monthName = ARABIC_HIJRI_MONTHS[hijriDateResult.month - 1];
-            
-            setHijriDate(hijriDateResult);
-            setIsLoading(false);
-          } catch (err) {
-            setError('تعذر جلب التاريخ الهجري');
-            setIsLoading(false);
-            console.error(err);
-          }
+          fetchHijriDate(latitude, longitude);
         },
         (positionError) => {
-          setError('تم رفض الوصول إلى الموقع');
-          setIsLoading(false);
-          console.error(positionError);
-        }
-      );
-    } else {
-      setError('الموقع غير مدعوم في هذا المتصفح');
-      setIsLoading(false);
-    }
-  }, [currentDate]);
+          console.warn('Geolocation error:', positionError);
+          // Use default location if geolocation fails
+            setLocation(DEFAULT_LOCATION);
+            fetchHijriDate(DEFAULT_LOCATION.latitude, DEFAULT_LOCATION.longitude);
+          },
+          {
+            enableHighAccuracy: false,
+            timeout: 5000,
+            maximumAge: 0
+          }
+        );
+      } else {
+        // Fallback if geolocation is not supported
+        setLocation(DEFAULT_LOCATION);
+        fetchHijriDate(DEFAULT_LOCATION.latitude, DEFAULT_LOCATION.longitude);
+      }
+    }, []);
+  
 
   // Error handling with Arabic text
   if (error) {
