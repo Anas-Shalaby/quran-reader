@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { HijriCalendar } from 'islam.js';
 import LoadingSpinner from '../components/LoadingSpinner';
+import axios from 'axios';
 
 // Arabic month names for Hijri calendar
 const ARABIC_HIJRI_MONTHS = [
@@ -21,39 +22,36 @@ const HijriCalendarPage = () => {
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchHijriDate = async (lat, lon) => {
+  const fetchHijriDate = async () => {
     try {
-      const calendar = new HijriCalendar();
-      const hijriDateResult = await calendar.getHijriDateByLocation(
-        currentDate, 
-        lat, 
-        lon
-      );
+      // Format the current date as DD-MM-YYYY for the API
+      const formattedDate = currentDate.toLocaleDateString('en-GB').replace(/\//g, '-');
       
-      // Replace month name with Arabic month name
-      hijriDateResult.monthName = ARABIC_HIJRI_MONTHS[hijriDateResult.month - 1];
+      const response = await axios.get(`http://api.aladhan.com/v1/gToH/${formattedDate}`);
       
-      setHijriDate(hijriDateResult);
+      const hijriData = response.data.data.hijri;
+      
+      setHijriDate({
+        day: hijriData.day,
+        month: {
+          ar: hijriData.month.ar,
+          en: hijriData.month.en
+        },
+        year: hijriData.year,
+        weekdayName: hijriData.weekday.ar
+      });
+      
       setIsLoading(false);
     } catch (err) {
       console.error('Hijri date fetch error:', err);
-      // Fallback to default location if location-based fetch fails
-      if (location !== DEFAULT_LOCATION) {
-        fetchHijriDate(DEFAULT_LOCATION.latitude, DEFAULT_LOCATION.longitude);
-      } else {
-        setError('تعذر جلب التاريخ الهجري');
-        setIsLoading(false);
-      }
+      setError('تعذر جلب التاريخ الهجري');
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    
-        // Fallback if geolocation is not supported
-        setLocation(DEFAULT_LOCATION);
-        fetchHijriDate(DEFAULT_LOCATION.latitude, DEFAULT_LOCATION.longitude);
-      
-    }, []);
+    fetchHijriDate();
+  }, []);
   
 
   // Error handling with Arabic text
