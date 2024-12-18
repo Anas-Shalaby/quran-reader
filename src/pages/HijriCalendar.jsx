@@ -27,7 +27,7 @@ const HijriCalendarPage = () => {
       // Format the current date as DD-MM-YYYY for the API
       const formattedDate = currentDate.toLocaleDateString('en-GB').replace(/\//g, '-');
       
-      const response = await axios.get(`http://api.aladhan.com/v1/gToH/${formattedDate}`);
+      const response = await axios.get(`https://api.aladhan.com/v1/gToH/${formattedDate}`);
       
       const hijriData = response.data.data.hijri;
       
