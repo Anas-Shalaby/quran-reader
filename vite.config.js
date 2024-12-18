@@ -3,7 +3,9 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  base: '/',
   build: {
+    outDir: 'dist',
     rollupOptions: {
       output: {
         manualChunks(id) {
@@ -12,8 +14,7 @@ export default defineConfig({
           }
         }
       }
-    },
-    outDir: 'dist'
+    }
   },
   plugins: [
     react(),
@@ -39,7 +40,7 @@ export default defineConfig({
         ]
       },
       workbox: {
-        maximumFileSizeToCacheInBytes: 50 * 1024 * 1024, // 50MB
+        maximumFileSizeToCacheInBytes: 50 * 1024 * 1024,
         globPatterns: ['**/*.{js,css,html,svg,png,ico,txt}'],
         runtimeCaching: [
           {
@@ -49,7 +50,7 @@ export default defineConfig({
               cacheName: 'google-fonts-cache',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
+                maxAgeSeconds: 60 * 60 * 24 * 365
               },
               cacheableResponse: {
                 statuses: [0, 200]
