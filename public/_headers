@@ -1,4 +1,4 @@
-/*
+/* 
   X-Frame-Options: DENY
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
@@ -10,5 +10,4 @@
   script-src 'self' 'unsafe-inline' 'unsafe-eval';
   img-src 'self' data:;
 
-
-/* /index.html 200
+/index.html 200
