@@ -78,6 +78,18 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+      setUserPlan(null);
+      // Optional: Redirect to login page or home page
+      // navigate('/login');
+    } catch (error) {
+      console.error('Logout Error', error);
+    }
+  };
+
   // Existing code for authentication state changes...
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -98,8 +110,8 @@ export const AuthProvider = ({ children }) => {
     loading,
     signUp,
     signIn,
+    logout,
     // signInWithGoogle,
-    // logout
   };
 
   return (

@@ -49,8 +49,8 @@ function NavBar() {
   };
 
   const navItems = [
-    { name: 'لوحة المتابعة', path: '/dashboard', icon: '📊' },
-    { name: 'اشتراك الخطة', path: '/select-plan', icon: '📝' },
+    // { name: 'لوحة المتابعة', path: '/dashboard', icon: '📊' },
+    // { name: 'اشتراك الخطة', path: '/select-plan', icon: '📝' },
     { name: 'القرآن الكريم', path: '/', icon: '📖' },
     { name: 'البحث', path: '/search', icon: '🔍' },
     { name: 'التقويم الهجري', path: '/hijri-calendar', icon: '📅' },
@@ -82,7 +82,8 @@ function NavBar() {
           {/* Logo */}
           <div className="flex-shrink-0">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              تطبيق تحفيظ القرآن
+             <Link to={'/'}>
+             تطبيق تحفيظ القرآن</Link>
             </h1>
           </div>
 
@@ -101,10 +102,10 @@ function NavBar() {
           </div>
 
           {/* User Actions and Dark Mode Toggle */}
-          <div className="flex items-center">
+          <div className="flex items-center space-x-2">
             <button
               onClick={toggleDarkMode}
-              className="mr-4 p-2 rounded-full bg-gray-200 dark:bg-dark-100 text-gray-800 dark:text-white"
+              className="p-2 rounded-full bg-gray-200 dark:bg-dark-100 text-gray-800 dark:text-white"
             >
               {isDarkMode ? '☀️' : '🌙'}
             </button>
@@ -116,19 +117,19 @@ function NavBar() {
                 تسجيل الخروج
               </button>
             ) : (
-              <div className="flex space-x-2">
-                <Link
+              <div className="hidden md:flex space-x-2">
+                {/* <Link
                   to="/login"
-                  className="bg-green-500 text-white px-3 py-2 rounded-md text-sm font-medium"
+                  className="bg-green-500 m-3 dark:bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium"
                 >
                   تسجيل الدخول
                 </Link>
                 <Link
                   to="/signup"
-                  className="bg-blue-500 text-white px-3 py-2 rounded-md text-sm font-medium"
+                  className="bg-blue-500 m-3 dark:bg-blue-700 text-white px-3 py-2 rounded-md text-sm font-medium"
                 >
                   إنشاء حساب
-                </Link>
+                </Link> */}
               </div>
             )}
           </div>
@@ -148,6 +149,35 @@ function NavBar() {
                   {item.icon} {item.name}
                 </Link>
               ))}
+              {!user && (
+                <div className="space-y-2">
+                  {/* <Link
+                    to="/login"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block w-full  bg-green-500 dark:bg-green-700 text-white text-center px-4 py-3 rounded-md text-base font-medium"
+                  >
+                    تسجيل الدخول
+                  </Link>
+                  <Link
+                    to="/signup"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="block w-full bg-blue-500 dark:bg-blue-700 text-white text-center px-4 py-3 rounded-md text-base font-medium"
+                  >
+                    إنشاء حساب
+                  </Link> */}
+                </div>
+              )}
+              {user && (
+                <button
+                  onClick={() => {
+                    logout();
+                    setIsMenuOpen(false);
+                  }}
+                  className="block w-full bg-red-500 dark:bg-red-700 text-white px-4 py-3 rounded-md text-base font-medium"
+                >
+                  تسجيل الخروج
+                </button>
+              )}
             </div>
           </div>
         )}
