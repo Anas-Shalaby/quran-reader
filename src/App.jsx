@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { FaMoon, FaSun, FaChartBar } from 'react-icons/fa';
 import HijriCalendarPage from './pages/HijriCalendar';
@@ -11,98 +11,146 @@ import SearchPage from './pages/SearchPage';
 import HadithPage from './pages/HadithPage';
 import PrayerTimesPage from './pages/PrayerTimesPage';
 import { QuranProgressProvider } from './contexts/QuranProgressContext';
-
+import { AuthProvider, useAuth } from './components/Auth/AuthProvider';
+import PrivateRoute from './components/Auth/PrivateRoute';
+import SignUp from './components/Auth/SignUp';
+import MemorizationDashboard from './components/Dashboard/MemorizationDashboard';
+import PlanSubscription from './components/Plans/PlanSubscription';
+import Login from './components/Auth/Login';
 const queryClient = new QueryClient();
 
 function NavBar() {
-  const location = useLocation();
+  const { user, logout } = useAuth();
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem('theme');
     return savedTheme === 'dark';
   });
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const toggleDarkMode = useCallback(() => {
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+      document.documentElement.classList.add('dark');
+      setIsDarkMode(true);
+    }
+  }, []);
+
+  const toggleDarkMode = () => {
     const newMode = !isDarkMode;
-    const html = document.documentElement;
-
+    setIsDarkMode(newMode);
+    
     if (newMode) {
-      html.classList.add('dark');
+      document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
     } else {
-      html.classList.remove('dark');
+      document.documentElement.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
-
-    setIsDarkMode(newMode);
-  }, [isDarkMode]);
+  };
 
   const navItems = [
-    { path: '/', label: 'الرئيسية', icon: 'home' },
-    { path: '/search', label: 'البحث', icon: 'search' },
-    { path: '/hijri-calendar', label: 'التقويم الهجري', icon: 'calendar' },
-    { path: '/hadiths', label: 'الأحاديث', icon: 'book' },
-    { path: '/prayer-times', label: 'المواقيت', icon: 'clock' }
+    { name: 'لوحة المتابعة', path: '/dashboard', icon: '📊' },
+    { name: 'اشتراك الخطة', path: '/select-plan', icon: '📝' },
+    { name: 'القرآن الكريم', path: '/', icon: '📖' },
+    { name: 'البحث', path: '/search', icon: '🔍' },
+    { name: 'التقويم الهجري', path: '/hijri-calendar', icon: '📅' },
+    { name: 'مواقيت الصلاة', path: '/prayer-times', icon: '🕌' }
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-dark-100 shadow-2xl z-50">
-      <div className="max-w-md mx-auto flex justify-around py-3">
-        {navItems.map((item) => (
-          <Link 
-            key={item.path}
-            to={item.path} 
-            className={`
-              flex flex-col items-center justify-center 
-              p-2 rounded-lg transition-all duration-300
-              ${location.pathname === item.path 
-                ? 'text-green-600 scale-110' 
-                : 'text-gray-500 dark:text-gray-300 hover:text-green-600'}
-            `}
-          >
-            {item.icon === 'home' && (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-              </svg>
-            )}
-            {item.icon === 'search' && (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            )}
-             {item.icon === 'calendar' && (
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            )}
-            {item.icon === 'book' && (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
-          )}
-            {item.icon === 'clock' && (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
-          )}
-            <span className="text-xs mt-1">{item.label}</span>
-          </Link>
-        ))}
+    <nav className="bg-white dark:bg-dark-200 shadow-md fixed top-0 left-0 right-0 z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Mobile Menu Button */}
+          <div className="flex items-center md:hidden">
+            <button 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="text-gray-700 dark:text-white focus:outline-none"
+            >
+              {isMenuOpen ? (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </button>
+          </div>
 
-        {/* Dark Mode Toggle */}
-        <button 
-          onClick={toggleDarkMode}
-          className="flex flex-col items-center justify-center p-2 rounded-lg"
-        >
-          {isDarkMode ? (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m3.343-5.657L5.636 5.636m12.728 12.728L18.364 18.364M12 7a5 5 0 110 10 5 5 0 010-10z" />
-            </svg>
-          ) : (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-            </svg>
-          )}
-        </button>
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+              تطبيق تحفيظ القرآن
+            </h1>
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex ml-10 flex-grow justify-center items-center space-x-4">
+            {navItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-100 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center"
+              >
+                <span className="ml-2">{item.icon}</span>
+                {item.name}
+              </Link>
+            ))}
+          </div>
+
+          {/* User Actions and Dark Mode Toggle */}
+          <div className="flex items-center">
+            <button
+              onClick={toggleDarkMode}
+              className="mr-4 p-2 rounded-full bg-gray-200 dark:bg-dark-100 text-gray-800 dark:text-white"
+            >
+              {isDarkMode ? '☀️' : '🌙'}
+            </button>
+            {user ? (
+              <button
+                onClick={logout}
+                className="bg-red-500 text-white px-3 py-2 rounded-md text-sm font-medium"
+              >
+                تسجيل الخروج
+              </button>
+            ) : (
+              <div className="flex space-x-2">
+                <Link
+                  to="/login"
+                  className="bg-green-500 text-white px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  تسجيل الدخول
+                </Link>
+                <Link
+                  to="/signup"
+                  className="bg-blue-500 text-white px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  إنشاء حساب
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {isMenuOpen && (
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+              {navItems.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  onClick={() => setIsMenuOpen(false)}
+                  className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-100 hover:text-gray-900 dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                >
+                  {item.icon} {item.name}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );
@@ -160,6 +208,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
        <QuranProgressProvider>
+       <AuthProvider >
       <Router>
         <div className="min-h-screen bg-gray-50 dark:bg-dark-50 pb-16">
           <header className="bg-gradient-to-r from-green-500 to-green-700 dark:from-dark-100 dark:to-dark-200 text-white py-6 shadow-md">
@@ -185,13 +234,33 @@ function App() {
               <Route path="/hijri-calendar" element={<HijriCalendarPage />} />
               <Route path="/hadiths" element={<HadithPage />} />
               <Route path="/prayer-times" element={<PrayerTimesPage />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/login" element={<Login />} />
 
+              <Route 
+            path="/select-plan" 
+            element={
+              // <PrivateRoute>
+                <PlanSubscription />
+              // </PrivateRoute>
+            } 
+          />
+              <Route 
+                path="/dashboard" 
+                element={
+                  // <PrivateRoute>
+                    <MemorizationDashboard />
+                  // </PrivateR/</main>oute>
+                } 
+              />
+              <Route path="/" element={<Navigate to="/dashboard" />} />
             </Routes>
           </main>
 
           <NavBar />
         </div>
       </Router>
+      </AuthProvider>
       </QuranProgressProvider>
     </QueryClientProvider>
   );

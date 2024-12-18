@@ -1,2 +1,4 @@
 node_modules
 .env
+# Add to existing .gitignore
+serviceAccountKey.json
