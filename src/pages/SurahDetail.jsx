@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { fetchSurahVerses, fetchTafasir } from '../services/quranApi';
 import LoadingSpinner from '../components/LoadingSpinner';
+import BookmarkButton from '../components/BookmarkButton';
 
 const SurahDetail = ({ surahs }) => {
   const navigate = useNavigate();
@@ -28,6 +29,8 @@ const SurahDetail = ({ surahs }) => {
         }, {});
         setShowTafasir(initialShowTafasir);
         
+        
+        
         setLoading(false);
       } catch (error) {
         console.error('Error loading surah details:', error);
@@ -44,7 +47,6 @@ const SurahDetail = ({ surahs }) => {
       [verseId]: !prev[verseId]
     }));
   };
-
 
   if (loading) return <LoadingSpinner message="جارٍ تحميل السورة..." fullScreen />;
 
@@ -125,6 +127,10 @@ const SurahDetail = ({ surahs }) => {
                 </p>
               </div>
             )}
+            <BookmarkButton 
+              surahNumber={parseInt(surahNumber)} 
+              verseNumber={verse.id} 
+            />
           </div>
         ))}
       </div>

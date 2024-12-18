@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { FaMoon, FaSun, FaChartBar } from 'react-icons/fa';
 import HijriCalendarPage from './pages/HijriCalendar';
 
 import { fetchSurahs } from './services/quranApi';
@@ -8,6 +9,8 @@ import SurahList from './components/SurahList';
 import SurahDetail from './pages/SurahDetail';
 import SearchPage from './pages/SearchPage';
 import HadithPage from './pages/HadithPage';
+import PrayerTimesPage from './pages/PrayerTimesPage';
+import { QuranProgressProvider } from './contexts/QuranProgressContext';
 
 const queryClient = new QueryClient();
 
@@ -37,8 +40,8 @@ function NavBar() {
     { path: '/', label: 'الرئيسية', icon: 'home' },
     { path: '/search', label: 'البحث', icon: 'search' },
     { path: '/hijri-calendar', label: 'التقويم الهجري', icon: 'calendar' },
-    { path: '/hadiths', label: 'الأحاديث', icon: 'book' }
-
+    { path: '/hadiths', label: 'الأحاديث', icon: 'book' },
+    { path: '/prayer-times', label: 'المواقيت', icon: 'clock' }
   ];
 
   return (
@@ -72,6 +75,11 @@ function NavBar() {
               </svg>
             )}
             {item.icon === 'book' && (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          )}
+            {item.icon === 'clock' && (
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
@@ -151,6 +159,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
+       <QuranProgressProvider>
       <Router>
         <div className="min-h-screen bg-gray-50 dark:bg-dark-50 pb-16">
           <header className="bg-gradient-to-r from-green-500 to-green-700 dark:from-dark-100 dark:to-dark-200 text-white py-6 shadow-md">
@@ -175,6 +184,7 @@ function App() {
               />
               <Route path="/hijri-calendar" element={<HijriCalendarPage />} />
               <Route path="/hadiths" element={<HadithPage />} />
+              <Route path="/prayer-times" element={<PrayerTimesPage />} />
 
             </Routes>
           </main>
@@ -182,6 +192,7 @@ function App() {
           <NavBar />
         </div>
       </Router>
+      </QuranProgressProvider>
     </QueryClientProvider>
   );
 }

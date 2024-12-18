@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@quranjs/api": "^1.7.1",
+    "adhan": "^4.4.3",
     "axios": "^1.6.2",
     "islam.js": "^1.1.0",
     "react": "^18.2.0",
