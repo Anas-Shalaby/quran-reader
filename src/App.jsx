@@ -25,7 +25,6 @@ function NavBar() {
     const savedTheme = localStorage.getItem('theme');
     return savedTheme === 'dark';
   });
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
@@ -52,6 +51,7 @@ function NavBar() {
     // { name: 'لوحة المتابعة', path: '/dashboard', icon: '📊' },
     // { name: 'اشتراك الخطة', path: '/select-plan', icon: '📝' },
     { name: 'القرآن الكريم', path: '/', icon: '📖' },
+    { name: 'الأحاديث', path: '/hadiths', icon: '📜' },
     { name: 'البحث', path: '/search', icon: '🔍' },
     { name: 'التقويم الهجري', path: '/hijri-calendar', icon: '📅' },
     { name: 'مواقيت الصلاة', path: '/prayer-times', icon: '🕌' }
@@ -61,24 +61,6 @@ function NavBar() {
     <nav className="bg-white dark:bg-dark-200 shadow-md fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Mobile Menu Button */}
-          <div className="flex items-center md:hidden">
-            <button 
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 dark:text-white focus:outline-none"
-            >
-              {isMenuOpen ? (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              ) : (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              )}
-            </button>
-          </div>
-
           {/* Logo */}
           <div className="flex-shrink-0">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -135,52 +117,21 @@ function NavBar() {
           </div>
         </div>
 
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  onClick={() => setIsMenuOpen(false)}
-                  className="text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-dark-100 hover:text-gray-900 dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-                >
-                  {item.icon} {item.name}
-                </Link>
-              ))}
-              {!user && (
-                <div className="space-y-2">
-                  {/* <Link
-                    to="/login"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="block w-full  bg-green-500 dark:bg-green-700 text-white text-center px-4 py-3 rounded-md text-base font-medium"
-                  >
-                    تسجيل الدخول
-                  </Link>
-                  <Link
-                    to="/signup"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="block w-full bg-blue-500 dark:bg-blue-700 text-white text-center px-4 py-3 rounded-md text-base font-medium"
-                  >
-                    إنشاء حساب
-                  </Link> */}
-                </div>
-              )}
-              {user && (
-                <button
-                  onClick={() => {
-                    logout();
-                    setIsMenuOpen(false);
-                  }}
-                  className="block w-full bg-red-500 dark:bg-red-700 text-white px-4 py-3 rounded-md text-base font-medium"
-                >
-                  تسجيل الخروج
-                </button>
-              )}
-            </div>
+        {/* Mobile Bottom Navbar */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-dark-200 shadow-lg md:hidden z-50">
+          <div className="flex justify-around items-center py-2">
+            {navItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className="flex flex-col items-center text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400"
+              >
+                <span className="text-xl">{item.icon}</span>
+                <span className="text-xs mt-1">{item.name}</span>
+              </Link>
+            ))}
           </div>
-        )}
+        </div>
       </div>
     </nav>
   );

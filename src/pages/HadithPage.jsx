@@ -171,7 +171,7 @@ return (
         {/* Decorative Header */}
         <div className="bg-gradient-to-r from-green-500 to-green-700 p-4 sm:p-6 text-center">
           <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">
-            أحاديث عشوائية
+            أحاديث شريفة
           </h1>
           <p className="text-sm sm:text-base text-white/80 mt-2">
             استمتع بحكمة من أحاديث الرسول ﷺ
