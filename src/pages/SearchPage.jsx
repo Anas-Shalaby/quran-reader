@@ -64,7 +64,7 @@ const SearchPage = () => {
   if (loading) return <LoadingSpinner message="جارٍ البحث..." fullScreen />;
 
   return (
-    <div className="space-y-6 pb-24 dark:bg-dark-50 dark:text-gray-100 min-h-screen">
+    <div className="space-y-6 pb-24 dark:bg-dark-50 dark:text-gray-100 min-h-screen mt-10">
       {/* Search Input */}
       <div className="sticky top-0 z-10 bg-white dark:bg-dark-100 shadow-sm rounded-lg">
         <div className="flex items-center bg-gray-100 dark:bg-dark-200 rounded-lg p-2">
