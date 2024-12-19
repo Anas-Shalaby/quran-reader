@@ -17,7 +17,7 @@ export const fetchSurahs = async () => {
 };
 export const fetchQuranPage = async (pageNumber) => {
   try {
-    const response = await axios.get(`http://localhost:4000/page/${pageNumber}`);
+    const response = await axios.get(`https://almotqenapi.onrender.com/page/${pageNumber}`);
     return response.data;
   } catch (error) {
     console.error(`Error fetching Quran page ${pageNumber}:`, error);
@@ -27,7 +27,7 @@ export const fetchQuranPage = async (pageNumber) => {
 
 export const downloadQuranPage = async (pageNumber) => {
   try {
-    const response = await axios.get(`http://localhost:4000/download/page/${pageNumber}`);
+    const response = await axios.get(`https://almotqenapi.onrender.com/download/page/${pageNumber}`);
     return response.data;
   } catch (error) {
     console.error(`Error downloading Quran page ${pageNumber}:`, error);
