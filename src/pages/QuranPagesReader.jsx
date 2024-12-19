@@ -18,7 +18,7 @@ const QuranPagesReader = ({ hideNavbar = false }) => {
   const [displayImages, setDisplayImages] = useState([]);
   const galleryRef = useRef(null);
 
-  // Custom navigation arrows
+  // Custom navigation arrows for RTL layout
   const CustomLeftNav = ({ onClickPrevious }) => (
     <button 
       onClick={onClickPrevious} 
@@ -68,31 +68,21 @@ const QuranPagesReader = ({ hideNavbar = false }) => {
           throw new Error(`Surah ${surahNumber} not found`);
         }
 
-        // Use the pages property from the surah model
-        const pageRange = selectedSurah.pages || [1, 604];
+        // Determine the start and end pages for the entire surah
+        const startPage = selectedSurah.pages[0];
+        const endPage = selectedSurah.pages[selectedSurah.pages.length - 1];
 
-        // Load pages for this surah
-        const surahPages = [];
-
-        for (let page = pageRange[0]; page <= pageRange[1]; page++) {
-          try {
-            const response = await axios.get(`https://almotqenapi.onrender.com/show/page/${page}`, {
-              responseType: 'blob',
-              timeout: 10000
-            });
-
-            const imageUrl = URL.createObjectURL(response.data);
-            surahPages.push({
-              original: imageUrl,
-              originalAlt: `${selectedSurah.nameArabic} - Page ${page}`,
-              pageNumber: page
-            });
-          } catch (pageError) {
-            console.error(`Error loading page ${page}:`, pageError);
-          }
+        // Load all pages for this surah
+        const surahImages = [];
+        for (let page = startPage; page <= endPage; page++) {
+          surahImages.push({
+            original: `/quran-images/${page}.png`,
+            originalAlt: `${selectedSurah.nameArabic} - Page ${page}`,
+            pageNumber: page
+          });
         }
 
-        setPageImages(surahPages);
+        setPageImages(surahImages);
         setLoading(false);
       } catch (error) {
         console.error('Error loading surah pages:', error);
@@ -102,11 +92,6 @@ const QuranPagesReader = ({ hideNavbar = false }) => {
     };
 
     loadSurahData();
-
-    // Cleanup function to revoke object URLs
-    return () => {
-      pageImages.forEach(image => URL.revokeObjectURL(image.original));
-    };
   }, [surahNumber]);
 
   // Prepare double page view for large screens
@@ -219,7 +204,7 @@ const QuranPagesReader = ({ hideNavbar = false }) => {
                               const currentIndex = galleryRef.current?.getCurrentIndex() || 0;
                               const totalSlides = displayImages.length;
                               if (currentIndex < totalSlides - 1) {
-                                galleryRef.current?.slideLeft();
+                                galleryRef.current?.slideNext();
                               }
                               
                             }}
@@ -234,7 +219,7 @@ const QuranPagesReader = ({ hideNavbar = false }) => {
                               // Ensure moving to the next page (going right in RTL)
                               const currentIndex = galleryRef.current?.getCurrentIndex() || 0;
                               if (currentIndex > 0) {
-                                galleryRef.current?.slideRight();
+                                galleryRef.current?.slidePrev();
                               }
                             }}
                             className="pointer-events-auto -ml-6 p-2 rounded-full transition-all duration-300 hover:bg-gray-100 dark:hover:bg-dark-100 opacity-0 group-hover:opacity-100"
@@ -277,6 +262,22 @@ const QuranPagesReader = ({ hideNavbar = false }) => {
                         </div>
                       </div>
                     </>
+                  )}
+                  renderLeftNav={(onClickPrevious) => (
+                    <CustomLeftNav 
+                      onClickPrevious={() => {
+                        // In RTL, left arrow (ChevronRightIcon) goes to next page
+                        galleryRef.current?.slideNext();
+                      }} 
+                    />
+                  )}
+                  renderRightNav={(onClickNext) => (
+                    <CustomRightNav 
+                      onClickNext={() => {
+                        // In RTL, right arrow (ChevronLeftIcon) goes to previous page
+                        galleryRef.current?.slidePrev();
+                      }} 
+                    />
                   )}
                 />
               </div>
