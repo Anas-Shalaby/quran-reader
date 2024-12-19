@@ -81,7 +81,7 @@ const SearchPage = () => {
               setError(null);
             }}
             onKeyPress={handleKeyPress}
-            className="w-full bg-transparent focus:outline-none text-right dark:bg-dark-200 dark:text-gray-100"
+            className="w-full bg-transparent focus:outline-none text-right  dark:bg-dark-200 dark:text-gray-100"
           />
           <button 
             onClick={handleSearch}
