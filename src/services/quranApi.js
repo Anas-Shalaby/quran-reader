@@ -15,6 +15,25 @@ export const fetchSurahs = async () => {
     throw error;
   }
 };
+export const fetchQuranPage = async (pageNumber) => {
+  try {
+    const response = await axios.get(`http://localhost:4000/page/${pageNumber}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching Quran page ${pageNumber}:`, error);
+    throw error;
+  }
+};
+
+export const downloadQuranPage = async (pageNumber) => {
+  try {
+    const response = await axios.get(`http://localhost:4000/download/page/${pageNumber}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error downloading Quran page ${pageNumber}:`, error);
+    throw error;
+  }
+};
 
 export const fetchSurahVerses = async (surahNumber) => {
   try {
@@ -34,26 +53,46 @@ export const fetchTafasir = async (surahNumber, surahs) => {
   try {
     const quranInstance = new Quran();
     const currentSurah = surahs.find(s => s.id === parseInt(surahNumber));
-    const versesCount = currentSurah ? currentSurah.versesCount : 7; // Fallback to 7 if not found
+    
+    if (!currentSurah) {
+      console.error('Surah not found:', surahNumber);
+      return [];
+    }
 
+    const versesCount = currentSurah.versesCount || 7;
     const tafasirPromises = [];
 
     // Fetch tafasir for each verse in the surah
     for (let verseNumber = 1; verseNumber <= versesCount; verseNumber++) {
-      const tafasirPromise = quranInstance.getVerseWithTranslationAndTafseer(
-        parseInt(surahNumber), 
-        verseNumber, 
-        TranslationEnum.English, 
-        TafseerEnum.TafseerAlSaddiArabic
-      );
-      tafasirPromises.push(tafasirPromise);
+      try {
+        const tafasirPromise = quranInstance.getVerseWithTranslationAndTafseer(
+          parseInt(surahNumber), 
+          verseNumber, 
+          TranslationEnum.Arabic,
+          TafseerEnum.TafseerAlSaddiArabic
+        );
+        tafasirPromises.push(tafasirPromise);
+      } catch (verseError) {
+        console.error(`Error fetching tafsir for verse ${verseNumber}:`, verseError);
+        tafasirPromises.push(null);
+      }
     }
 
     const tafasirResults = await Promise.all(tafasirPromises);
-    return tafasirResults;
+    
+    // Process and map the results
+    return tafasirResults
+      .filter(result => result !== null)
+      .map((result, index) => {
+        const verseNumber = index + 1;
+        return {
+          verse_key: `${surahNumber}:${verseNumber}`,
+          tafseer: result.tafseer || 'لم يتم العثور على تفسير لهذه الآية'
+        };
+      });
   } catch (error) {
     console.error(`Error fetching tafasir for Surah ${surahNumber}:`, error);
-    throw error;
+    return [];
   }
 };
 

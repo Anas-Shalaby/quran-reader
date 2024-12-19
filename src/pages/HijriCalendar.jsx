@@ -77,7 +77,7 @@ const HijriCalendarPage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mx-auto px-4 py-6 mt-20">
       {isLoading ? (
         <div className="flex justify-center items-center h-64">
           <LoadingSpinner />

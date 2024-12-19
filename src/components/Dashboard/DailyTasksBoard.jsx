@@ -55,7 +55,7 @@ const DailyTasksBoard = () => {
         taskType: taskId,
         surah: task.surah,
         startAyah: task.startAyah,
-        endAyah: task.endAyah
+        endAyah: task.endAyah,
       });
 
       // Update tasks state

@@ -166,7 +166,7 @@ const SocialMediaShareButton = ({ platform, icon: Icon, bgColor, textColor, onCl
   // Main Render
   // Main Render
 return (
-    <div className="container mx-auto px-4 py-8 max-w-2xl">
+    <div className="container mx-auto px-4 py-8 max-w-2xl mt-10">
       <div className="bg-white dark:bg-dark-200 rounded-3xl shadow-2xl overflow-hidden">
         {/* Decorative Header */}
         <div className="bg-gradient-to-r from-green-500 to-green-700 p-4 sm:p-6 text-center">

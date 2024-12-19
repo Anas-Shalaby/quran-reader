@@ -98,7 +98,7 @@ const PrayerTimesPage = () => {
   const prayerOrder = ['Fajr', 'Sunrise', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
 
   return (
-    <div className="container mx-auto p-4  ">
+    <div className="container mx-auto pt-32 h-[100vh] mt-20">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 mb-2">مواقيت الصلاة</h1>

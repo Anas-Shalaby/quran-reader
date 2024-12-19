@@ -199,9 +199,54 @@ input, textarea {
     --color-accent: #007AFF;
   }
 }
+/* @media (max-width: 768px) {
+  .app-topbar {
+    display: none !important;
+  }
+} */
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+/* Existing styles */
+@media (max-width: 768px) {
+  /* Hide only the top header */
+  header.top-header {
+    display: none !important;
+  }
+}
+
+/* Specific route-based navbar hiding */
+.quran-page-navbar-hide {
+  display: none !important;
+}
+
+/* Mobile-specific styling for full-screen images */
+@media (max-width: 640px) {
+  /* Remove all padding and borders on mobile */
+  .quran-pages-reader {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .quran-pages-reader > div {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .quran-pages-reader img {
+    width: 100vw !important;
+    height: 100vh !important;
+    object-fit: contain !important;
+  }
+}
+
+/* Hide ImageGallery default navigation arrows */
+.image-gallery-left-nav,
+.image-gallery-right-nav {
+  display: none !important;
 }

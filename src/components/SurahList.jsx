@@ -29,9 +29,8 @@ const SurahList = ({ surahs }) => {
       addBookmark(surahNumber, 1);
     }
   };
-
   return (
-    <div className="space-y-6 min-h-screen dark:bg-dark-50 dark:text-gray-100 mb-10">
+    <div className="space-y-6 min-h-screen dark:bg-dark-50 dark:text-gray-100 mb-10 mt-20">
       {/* Search Input */}
       <div className="sticky top-0 z-10 bg-white dark:bg-dark-100 shadow-sm rounded-lg">
         <div className="flex items-center bg-gray-100 dark:bg-dark-200 rounded-lg p-2">
@@ -56,41 +55,35 @@ const SurahList = ({ surahs }) => {
             className="relative group"
           >
             <Link 
-              to={`/surah/${surah.id}`} 
+              to={`/quran-pages/${surah.pages[0]}`} 
               className="block"
             >
               <div className="bg-white dark:bg-dark-100 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 flex justify-between items-center">
-                <div className="flex-grow text-right">
-                  <h2 className="text-lg font-bold text-green-800 dark:text-green-300 group-hover:text-green-600 dark:group-hover:text-green-400 transition-colors">
-                    {surah.nameArabic}
-                  </h2>
-                   {/* Bookmark Button */}
-        
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">
-                    {surah.translatedName.name}
-                  </p>
-                  
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-green-100 dark:bg-green-900 ml-3 rounded-full flex items-center justify-center">
+                    <span className="text-green-600 dark:text-green-300 ">{surah.id}</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                      {surah.nameArabic}
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {surah.translatedName.name} - {surah.versesCount} اية
+                    </p>
+                  </div>
                 </div>
-              <div>
-              <button 
-              onClick={(e) => toggleSurahBookmark(surah.id, e)}
-              className={`
-                 top-2 left-2 p-2 rounded-full transition-colors z-10
-                ${isSurahBookmarked(surah.id) 
-                  ? 'text-yellow-500 bg-yellow-100' 
-                  : 'text-gray-500 hover:text-yellow-500'}
-              `}
-            >
-              <FaBookmark className="w-5 h-5" />
-            </button>
-              </div>
-                <div className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-300 rounded-full w-10 h-10 flex items-center justify-center">
-                  {surah.id}
+                <div className="text-gray-400 dark:text-gray-600">
+                  {surah.revelationPlace === "makkah" ? 'مكية' : 'مدنية'}
                 </div>
               </div>
             </Link>
-            
-           
+            <Link 
+              to={`/surah/${surah.id}`} 
+              className="text-green-600 hover:text-green-800 ml-2"
+            >
+              انظر التفسير  
+            </Link>
+        
           </div>
         ))}
       </div>
