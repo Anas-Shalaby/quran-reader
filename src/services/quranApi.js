@@ -3,7 +3,12 @@ import axios from 'axios';
 import { Quran, TafseerEnum, TranslationEnum } from 'islam.js';
 
 const BASE_URL = 'https://api.quran.com/api/v4';
+const QURAN_API_BASE_URL = import.meta.env.VITE_QURAN_API_URL || 'https://almotqenapi.onrender.com';
 
+const axiosInstance = axios.create({
+  baseURL: QURAN_API_BASE_URL,
+  timeout: 15000, // Increased timeout
+});
 export const fetchSurahs = async () => {
   try {
     const response = await quran.v4.chapters.findAll({
@@ -17,20 +22,32 @@ export const fetchSurahs = async () => {
 };
 export const fetchQuranPage = async (pageNumber) => {
   try {
-    const response = await axios.get(`https://almotqenapi.onrender.com/page/${pageNumber}`);
+    console.log(`Fetching page ${pageNumber} from URL: ${QURAN_API_BASE_URL}/page/${pageNumber}`);
+    const response = await axiosInstance.get(`/page/${pageNumber}`);
     return response.data;
   } catch (error) {
-    console.error(`Error fetching Quran page ${pageNumber}:`, error);
+    console.error(`Error fetching Quran page ${pageNumber}:`, {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      headers: error.response?.headers
+    });
     throw error;
   }
 };
 
 export const downloadQuranPage = async (pageNumber) => {
   try {
-    const response = await axios.get(`https://almotqenapi.onrender.com/download/page/${pageNumber}`);
+    console.log(`Downloading page ${pageNumber} from URL: ${QURAN_API_BASE_URL}/download/page/${pageNumber}`);
+    const response = await axiosInstance.get(`/download/page/${pageNumber}`);
     return response.data;
   } catch (error) {
-    console.error(`Error downloading Quran page ${pageNumber}:`, error);
+    console.error(`Error downloading Quran page ${pageNumber}:`, {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      headers: error.response?.headers
+    });
     throw error;
   }
 };
